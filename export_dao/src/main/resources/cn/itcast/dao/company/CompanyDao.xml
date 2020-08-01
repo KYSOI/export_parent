@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 当前文件唯一标记 -->
+<mapper namespace="cn.itcast.dao.company.CompanyDao">
+
+
+    <!--定义resultMap-->
+    <resultMap id="BaseResultMap" type="cn.itcast.domain.company.Company">
+        <id property="id" column="id"></id>
+        <id property="name" column="name"></id>
+        <id property="expirationDate" column="expiration_date"></id>
+        <id property="address" column="address"></id>
+        <id property="licenseId" column="license_id"></id>
+        <id property="representative" column="representative"></id>
+        <id property="phone" column="phone"></id>
+        <id property="companySize" column="company_size"></id>
+        <id property="industry" column="industry"></id>
+        <id property="remarks" column="remarks"></id>
+        <id property="state" column="state"></id>
+        <id property="balance" column="balance"></id>
+        <id property="city" column="city"></id>
+    </resultMap>
+
+    <!--查询全部-->
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from ss_company
+    </select>
+
+</mapper>
