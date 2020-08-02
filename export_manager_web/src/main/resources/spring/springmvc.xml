@@ -30,5 +30,7 @@
     <!--4.释放静态资源-->
     <mvc:default-servlet-handler></mvc:default-servlet-handler>
 
+    <!--    异常处理-->
+    <bean class="cn.itcast.web.exception.SaaSException"></bean>
 
 </beans>

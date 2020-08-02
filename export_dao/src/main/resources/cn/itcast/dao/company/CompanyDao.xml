@@ -26,4 +26,68 @@
         select * from ss_company
     </select>
 
+
+    <!--    保存企业-->
+    <insert id="save">
+    insert into ss_company (
+            id,
+            name,
+            expiration_date,
+            address,
+            license_id,
+            representative,
+            phone,
+            company_size,
+            industry,
+            remarks,
+            state,
+            balance,
+            city
+    )
+    values
+    (
+            #{id},
+            #{name},
+            #{expirationDate},
+            #{address},
+            #{licenseId},
+            #{representative},
+            #{phone},
+            #{companySize},
+            #{industry},
+            #{remarks},
+            #{state},
+            #{balance},
+            #{city}
+    )
+</insert>
+
+
+    <!--根据id查询-->
+    <select id="findById" resultMap="BaseResultMap">
+    select * from ss_company where id=#{id}
+</select>
+
+
+    <!--    更新修改-->
+    <update id="update">
+        update ss_company set
+        name=#{name},
+        expiration_date=#{expirationDate},
+        address=#{address},
+        license_id=#{licenseId},
+        representative=#{representative},
+        phone=#{phone},
+        company_size=#{companySize},
+        industry=#{industry},
+        remarks=#{remarks},
+        state=#{state},
+        balance=#{balance},
+        city=#{city}
+        where id=#{id};
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from ss_company where id=#{id}
+    </delete>
 </mapper>

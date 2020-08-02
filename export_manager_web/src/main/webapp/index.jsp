@@ -1,18 +1,11 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: ALIENWARE
-  Date: 2020/7/30
-  Time: 21:42
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=utf-8"%>
 <html>
-    <head>
-        <title>Title</title>
-    </head>
-    <body>
-        <c:forEach items="${list}" var="company">
-            ${company.name}<br>
-        </c:forEach>
-    </body>
+<head>
+</head>
+<script type="text/javascript">
+    //javascript页面跳转
+     window.location.href = "login.do";
+</script>
+<body>
+</body>
 </html>

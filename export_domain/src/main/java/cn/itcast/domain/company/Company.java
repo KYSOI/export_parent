@@ -1,11 +1,14 @@
 package cn.itcast.domain.company;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class Company implements Serializable {
     private String  id;  //主键ID
     private String  name; //企业名称
+    @DateTimeFormat(pattern = "yyy-MM-dd")
     private Date expirationDate; //到期时间
     private String  address;
     private String  licenseId;      //执照编号
