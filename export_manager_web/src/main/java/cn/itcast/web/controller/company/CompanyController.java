@@ -2,27 +2,34 @@ package cn.itcast.web.controller.company;
 
 import cn.itcast.domain.company.Company;
 import cn.itcast.service.company.CompanyService;
+import cn.itcast.web.controller.BaseController;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
 @RequestMapping("/company")
-public class CompanyController extends BaseController{
+public class CompanyController extends BaseController {
 
     @Autowired
     private CompanyService companyService;
 
 
-
+    //查询所有
     @RequestMapping("/list")
-    public String findAll() {
-        List<Company> list = companyService.findAll();
-        request.setAttribute("list", list);
+    public String findAll(
+            //分页
+            @RequestParam(defaultValue = "1")int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        PageInfo info=companyService.findPageByHelper(page, size);
+        //List<Company> list = companyService.findAll();
+        request.setAttribute("page",info);
         return "company/company-list";
     }
 

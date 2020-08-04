@@ -2,6 +2,7 @@ package cn.itcast.service.company;
 
 import cn.itcast.dao.company.CompanyDao;
 import cn.itcast.domain.company.Company;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface CompanyService {
     void update(Company company);
 
     void delete(String id);
+
+    PageInfo findPageByHelper(int page, int size);
 }

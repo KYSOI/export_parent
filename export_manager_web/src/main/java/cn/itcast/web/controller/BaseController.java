@@ -1,4 +1,4 @@
-package cn.itcast.web.controller.company;
+package cn.itcast.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,4 +15,14 @@ public class BaseController {
 
     @Autowired
     protected HttpSession session;
+
+    //    获取当前登录用户的企业id
+    public String getLoginCompanyId() {
+        return "1";
+    }
+
+//    获取当前登录用户的企业名称
+    public String getLoginCompanyName() {
+        return "1";
+    }
 }

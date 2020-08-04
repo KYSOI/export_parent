@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis
+.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.dao.user.UserDao">
+
+    <resultMap id="BaseResultMap" type="cn.itcast.domain.user.User">
+            <id column="user_id" property="id"></id>
+        <result column="dept_id" property="deptId"></result>
+        <result column="email" property="email"></result>
+        <result column="user_name" property="userName"></result>
+        <result column="station" property="station"></result>
+        <result column="password" property="password"></result>
+        <result column="state" property="state"></result>
+        <result column="company_id" property="companyId"></result>
+        <result column="company_name" property="companyName"></result>
+        <result column="dept_name" property="deptName"></result>
+        <result column="manager_id" property="managerId"></result>
+        <result column="gender" property="gender"></result>
+        <result column="telephone" property="telephone"></result>
+        <result column="birthday" property="birthday"></result>
+        <result column="degree" property="degree"></result>
+        <result column="salary" property="salary"></result>
+        <result column="join_date" property="joinDate"></result>
+        <result column="order_no" property="orderNo"></result>
+    </resultMap>
+
+
+    <!--根据企业id查询用户分页-->
+    <select id="findAll" resultMap="BaseResultMap">
+        select * from pe_user where is_delete=0
+    </select>
+
+
+    <!--    保存-->
+    <insert id="save">
+        insert into pe_user(user_id,dept_id,dept_name,email,user_name,password,state,manager_id,join_date,salary,
+        birthday,gender,station,telephone,degree,remark,order_no,company_id,company_name)values(#{id},#{deptId},
+        #{deptName},#{email},#{userName},#{password},#{state},#{managerId},#{joinDate},#{salary},#{birthday},#{gender},
+        #{station},#{telephone},#{degree},#{remark},#{orderNo},#{companyId},#{companyName})
+    </insert>
+
+
+<!--    根据id查user-->
+    <select id="findUserById" resultMap="BaseResultMap">
+        select * from pe_user where user_id = #{id}
+    </select>
+<!--修改-->
+    <update id="update">
+        update pe_user set dept_id=#{deptId},dept_name=#{deptName},email=#{email},user_name=#{userName},password=#{password},
+        state=#{state},manager_id=#{managerId},join_date=#{joinDate},salary=#{salary},birthday=#{birthday},gender=#{gender},
+        station=#{station},telephone=#{telephone},degree=#{degree},remark=#{remark},order_no=#{orderNo},company_id=#{companyId},
+        company_name=#{companyName} where user_id=#{id}
+    </update>
+
+<!--    删除-->
+    <delete id="delete">
+        update pe_user set is_delete=1 where user_id=#{id}
+</delete>
+
+
+</mapper>
