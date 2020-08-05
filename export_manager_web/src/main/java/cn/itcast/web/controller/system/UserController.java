@@ -1,10 +1,11 @@
-package cn.itcast.web.controller.user;
+package cn.itcast.web.controller.system;
 
-import cn.itcast.dao.user.UserDao;
 import cn.itcast.domain.system.Dept;
-import cn.itcast.domain.user.User;
+import cn.itcast.domain.system.Role;
+import cn.itcast.domain.system.User;
 import cn.itcast.service.system.DeptService;
-import cn.itcast.service.user.UserService;
+import cn.itcast.service.system.RoleService;
+import cn.itcast.service.system.UserService;
 import cn.itcast.web.controller.BaseController;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +25,39 @@ public class UserController extends BaseController {
     @Autowired
     private DeptService deptService;
 
+    @Autowired
+    private RoleService roleService;
+
+
+
+    //保存角色
+    @RequestMapping("/changeRole")
+
+    public String changeRole(String userid,String [] roleIds) {
+    //    调用service
+        userService.changeRole(userid, roleIds);
+        return"redirect:/system/user/list.do";
+    }
+    //进入分配角色页面
+    @RequestMapping("/roleList")
+    public String roleList(String id) {
+        //    根据id查询用户
+        User user = userService.findById(id);
+        request.setAttribute("user", user);
+        //    查询所有用户juese
+        List<Role> roleList = roleService.findAll(getLoginCompanyId());
+        request.setAttribute("roleList", roleList);
+        // 根据id查询用户所具有角色
+        List<String> roles = userService.findRolesByUserId(id);
+        System.out.println(roles);
+        String userRoleStr = "";
+        for (String roleId : roles) {
+            userRoleStr += roleId + " ";
+        }
+        request.setAttribute("userRoleStr",userRoleStr);
+        return"system/user/user-role";
+    }
+
 
     //删除
     @RequestMapping("/delete")
@@ -31,15 +65,16 @@ public class UserController extends BaseController {
         userService.delete(id);
         return "redirect:/system/user/list.do";
     }
+
     //    根据企业id保存或修改用户
     @RequestMapping("/toUpdate")
     public String toUpdate(String id) {
         String companyId = getLoginCompanyId();
 
-        User user=userService.findUserById(id);
+        User user = userService.findUserById(id);
         List<Dept> list = deptService.findAll(companyId);
-        request.setAttribute("user",user);
-        request.setAttribute("deptList",list);
+        request.setAttribute("user", user);
+        request.setAttribute("deptList", list);
         return "system/user/user-update";
 
     }
@@ -54,7 +89,7 @@ public class UserController extends BaseController {
 
         if (StringUtils.isEmpty(user.getId())) {
             userService.save(user);
-        }else {
+        } else {
             userService.update(user);
         }
         //重定向
@@ -65,9 +100,9 @@ public class UserController extends BaseController {
     public String toAdd() {
         String companyId = getLoginCompanyId();
         //下拉框()之前写的复用
-        List<Dept>list=deptService.findAll(companyId);
-        request.setAttribute("deptList",list);
-        return"system/user/user-add";
+        List<Dept> list = deptService.findAll(companyId);
+        request.setAttribute("deptList", list);
+        return "system/user/user-add";
     }
 
 

@@ -1,8 +1,8 @@
-package cn.itcast.service.user.impl;
+package cn.itcast.service.system.impl;
 
-import cn.itcast.dao.user.UserDao;
-import cn.itcast.domain.user.User;
-import cn.itcast.service.user.UserService;
+import cn.itcast.dao.system.UserDao;
+import cn.itcast.domain.system.User;
+import cn.itcast.service.system.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +48,24 @@ public class UserServiceImpl implements UserService {
     //删除
     public void delete(String id) {
         userDao.delete(id);
+    }
+
+    @Override
+    public User findById(String id) {
+        return userDao.findUserById(id);
+    }
+
+    @Override
+    public List<String> findRolesByUserId(String id) {
+        return userDao.findRolesByUserId(id);
+    }
+    //保存角色分配
+    @Override
+    public void changeRole(String userid, String[] roleIds) {
+        userDao.deleteUserRole(userid);
+        for (String roleId : roleIds) {
+
+            userDao.changeRole(userid,roleId);
+        }
     }
 }

@@ -1,7 +1,11 @@
-package cn.itcast.service.user;
+package cn.itcast.service.system;
 
-import cn.itcast.domain.user.User;
+
+
+import cn.itcast.domain.system.User;
 import com.github.pagehelper.PageInfo;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -15,4 +19,10 @@ public interface UserService {
     void update(User user);
 
     void delete(String id);
+
+    User findById(String id);
+
+    List<String> findRolesByUserId(String id);
+
+    void changeRole(String userid, String[] roleIds);
 }

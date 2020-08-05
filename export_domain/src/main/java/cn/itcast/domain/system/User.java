@@ -1,9 +1,8 @@
-package cn.itcast.domain.user;
+package cn.itcast.domain.system;
 
 public class User {
     /** 
-     */
-
+     */ 
     private String id;
 
     /** 
