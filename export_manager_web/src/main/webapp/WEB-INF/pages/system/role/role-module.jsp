@@ -15,29 +15,28 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
     <!-- 页面meta /-->
-    <link rel="stylesheet" href="plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
-    <script type="text/javascript" src="plugins/ztree/js/jquery-1.4.4.min.js"></script>
-    <script type="text/javascript" src="plugins/ztree/js/jquery.ztree.core-3.5.js"></script>
-    <script type="text/javascript" src="plugins/ztree/js/jquery.ztree.excheck-3.5.js"></script>
+    <link rel="stylesheet" href="../../../../plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <script type="text/javascript" src="../../../../plugins/ztree/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="../../../../plugins/ztree/js/jquery.ztree.core-3.5.js"></script>
+    <script type="text/javascript" src="../../../../plugins/ztree/js/jquery.ztree.excheck-3.5.js"></script>
 
-    <SCRIPT type="text/javascript">
-        var zTreeObj; //ztree树对象
-        //1.ztree的基本配置
+    <script>
+        //1、ztree的配置
         var setting = {
             check: {
-                enable: true
+                enable: true  //开启可选框功能
             },
             data: {
                 simpleData: {
-                    enable: true
+                    enable: true  //节点数据使用简单模式（json数据格式）
                 }
             }
         };
 
-        //2.ztree节点数据
+        //2、节点数据,json
         var zNodes =[
-            { id:1, pId:0, name:"随意勾选 1"},
-            { id:11, pId:1, name:"随意勾选 1-1"},
+            { id:1, pId:0, name:"随意勾选 1", open:true},
+            { id:11, pId:1, name:"随意勾选 1-1", open:true},
             { id:111, pId:11, name:"随意勾选 1-1-1"},
             { id:112, pId:11, name:"随意勾选 1-1-2"},
             { id:12, pId:1, name:"随意勾选 1-2", open:true},
@@ -51,40 +50,37 @@
             { id:23, pId:2, name:"随意勾选 2-3"}
         ];
 
-        //3.在页面初始化的时候加载配置数据展示Ztree树
-        $(document).ready(function(){
-            /**
-             * 在页面初始化之后，发送ajax请求到controller
-             * 获取菜单的节点数据
-             */
-            //发送的url链接，回调函数（当发送请求，获取服务器响应数据之后，执行的js代码）
-            $.get("/system/role/getZtreeNodes.do?roleId=${role.id}", function( data ) {
-                //当发送请求，获取服务器响应数据之后，执行的js代码
-                //data：服务器响应的数据(节点数据)
-                zTreeObj = $.fn.zTree.init($("#treeDemo"), setting,data );
-                zTreeObj.expandAll(true) ;//展开所有的节点
-            });
-        })
+        var ztreeObj; //ztree树对象
 
-        //保存
-        function submitCheckedNodes(){
-            //调用ztree的API获取所有被勾选的节点对象的数组（构建的节点 id，pid，name）
-            var nodes = zTreeObj.getCheckedNodes(true);//表示获取 被勾选 的节点集合
-            //循环数组获取所有的节点id，构建字符串
-            var moduleIdS = "";
+        //3、在页面初始化的时候，生成ztree树
+        $(document).ready(function(){
+            //发送ajax请求，获取节点数据，当获取成功之后，再去构造ztree树
+            //1.访问的URL，2.回调方法（处理成功之后的回调方法，参数：服务端返回值）
+            $.get( "/system/role/getZtreeNodes.do?roleId=${role.id}", function(data) {
+                //生成ztree树    html标签（ztree展示的位置），ztree的配置，ztree的节点数据
+                ztreeObj = $.fn.zTree.init($("#treeDemo"), setting, data);
+                ztreeObj.expandAll(true); //展开或者关闭所有的节点（参数：true，false）
+            })
+        });
+        //提交数据
+        function submitCheckedNodes() {
+            //1、调用ztree的api获取所有已经勾选的节点数据 ： getCheckedNodes(true:已勾选|false：未勾选)
+            var nodes = ztreeObj.getCheckedNodes(true);
+            //2、提取每个节点的模块id，拼接成字符串(每个模块id间通过 “,”隔开)
+            var moduleIds = "";
             for (var i = 0; i <nodes.length ; i++) {
                 var node = nodes[i];
-                if(moduleIdS != "") {
-                    moduleIdS +=",";
+                moduleIds += node.id;
+                if(i< nodes.length -1) {
+                    moduleIds +=",";
                 }
-                moduleIdS += node.id ;
             }
-            //将字符串赋值到对应的input表单上
-            $("#moduleIds").val(moduleIdS);
-            //自动提交form表单
+            //3、将字符串绑定到input框上  moduleIds
+            $("#moduleIds").val(moduleIds);
+            //4、自动的提交form表单 icform
             $("#icform").submit();
         }
-    </SCRIPT>
+    </script>
 </head>
 
 <body style="overflow: visible;">

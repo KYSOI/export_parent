@@ -6,6 +6,7 @@ import cn.itcast.domain.system.User;
 import cn.itcast.service.system.DeptService;
 import cn.itcast.service.system.RoleService;
 import cn.itcast.service.system.UserService;
+import cn.itcast.util.Encrypt;
 import cn.itcast.web.controller.BaseController;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -88,6 +89,7 @@ public class UserController extends BaseController {
         user.setCompanyName(companyName);
 
         if (StringUtils.isEmpty(user.getId())) {
+           user.setPassword( Encrypt.md5(user.getPassword(), user.getEmail()));
             userService.save(user);
         } else {
             userService.update(user);

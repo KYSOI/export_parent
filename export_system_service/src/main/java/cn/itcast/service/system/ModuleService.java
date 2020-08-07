@@ -1,6 +1,7 @@
 package cn.itcast.service.system;
 
 import cn.itcast.domain.system.Module;
+import cn.itcast.domain.system.User;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface ModuleService {
     Module findById(String id);
 
     void delete(String id);
+    //根据用户查询所有权限
+    List<Module> findByUser(User user);
 }

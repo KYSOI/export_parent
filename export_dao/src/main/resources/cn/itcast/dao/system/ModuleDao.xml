@@ -25,7 +25,7 @@
     select * from ss_module
 </select>
 
-
+    <!--保存-->
     <insert id="save" parameterType="cn.itcast.domain.system.Module">
           insert into ss_module (module_id, parent_id, parent_name, name, layer_num, is_leaf,
           ico, cpermission, curl, ctype, state, belong, cwhich, quote_num,
@@ -35,8 +35,7 @@
           #{remark}, #{orderNo})
       </insert>
 
-
-
+    <!--修改-->
     <update id="update">
         update ss_module
           set parent_id = #{parentId},
@@ -57,53 +56,26 @@
         where module_id = #{id}
     </update>
 
-
-
+    <!--根据id查询所有权限-->
     <select id="findById" resultMap="BaseResultMap">
         select * from ss_module where module_id=#{id}
     </select>
+    <!--根据belong查询模块-->
+    <select id="findByBelong" resultMap="BaseResultMap">
+        select * from ss_module where belong=#{belong}
+    </select>
 
-
-<!--    删除-->
+    <!--根据用户id，多个表联合查询用户的模块列表-->
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT * FROM ss_module WHERE module_id IN(
+            SELECT DISTINCT rm.module_id FROM pe_role_user ru,pe_role_module rm
+            WHERE ru.role_id=rm.role_id AND ru.user_id=#{userId}
+        )
+    </select>
+    <!--删除-->
     <delete id="delete">
 
          delete from ss_module where module_id = #{id}
     </delete>
-    <!--  &lt;!&ndash;查询全部模块列表&ndash;&gt;
-      <select id="findAll" resultMap="BaseResultMap">
-          select * from ss_module
-      </select>
 
-      &lt;!&ndash;根据id查询&ndash;&gt;
-      <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
-          select * from ss_module where module_id = #{id}
-      </select>
-
-      &lt;!&ndash;删除&ndash;&gt;
-      <delete id="delete" parameterType="java.lang.String">
-          delete from ss_module where module_id = #{id}
-      </delete>
-
-      &lt;!&ndash;保存&ndash;&gt;
-
-      &lt;!&ndash;更新&ndash;&gt;
-      <update id="update" parameterType="cn.itcast.domain.system.Module">
-          update ss_module
-          set parent_id = #{parentId},
-          parent_name = #{parentName},
-          name = #{name},
-          layer_num = #{layerNum},
-          is_leaf = #{isLeaf},
-          ico = #{ico},
-          cpermission = #{cpermission},
-          curl = #{curl},
-          ctype = #{ctype},
-          state = #{state},
-          belong = #{belong},
-          cwhich = #{cwhich},
-          quote_num = #{quoteNum},
-          remark = #{remark},
-          order_no = #{orderNo}
-          where module_id = #{id}
-      </update>-->
 </mapper>

@@ -18,4 +18,8 @@ public interface RoleService  {
     void delete(String id);
 
     List<Role> findAll(String loginCompanyId);
+    //根据id角色,查询此角色已经具有的模块
+    List<String> findModulesByRoleId(String roleId);
+    //实现对角色分配权限
+    void updateRoleModule(String roleid, String moduleIds);
 }

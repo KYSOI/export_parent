@@ -23,5 +23,6 @@ public interface UserDao {
     void changeRole(@Param("userId") String userId, @Param("roleId") String roleId);
 
     void deleteUserRole(String userid);
-
+    //根据用户邮箱查询
+    User findByEmail(String email);
 }

@@ -68,4 +68,9 @@ public class UserServiceImpl implements UserService {
             userDao.changeRole(userid,roleId);
         }
     }
+
+    //根据用户邮箱查询用户
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email);
+    }
 }

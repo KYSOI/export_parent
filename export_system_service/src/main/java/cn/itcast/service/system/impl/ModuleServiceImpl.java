@@ -3,6 +3,7 @@ package cn.itcast.service.system.impl;
 import cn.itcast.dao.system.ModuleDao;
 
 import cn.itcast.domain.system.Module;
+import cn.itcast.domain.system.User;
 import cn.itcast.service.system.ModuleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -49,5 +50,22 @@ public class ModuleServiceImpl implements ModuleService {
     //@删除
     public void delete(String id) {
         moduleDao.delete(id);
+    }
+
+    //根据用户查询所有权限
+    public List<Module> findByUser(User user) {
+        //获取用户类型
+        Integer degree = user.getDegree();
+        //判断用户类型
+        if (degree == 0) {
+            //saas管理员0,查询ssa的内部模块  belong=0
+            return moduleDao.findByBelong(0);
+        } else if (degree == 1) {
+            //企业管理员1,查询所有的企业模块  belong=1
+            return moduleDao.findByBelong(1);
+        } else {
+            // 企业普通员工,rbac多表联查
+            return moduleDao.findByUserId(user.getId());
+        }
     }
 }

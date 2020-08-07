@@ -25,4 +25,6 @@ public interface UserService {
     List<String> findRolesByUserId(String id);
 
     void changeRole(String userid, String[] roleIds);
+    //根据用户邮箱查询用户
+    User findByEmail(String email);
 }

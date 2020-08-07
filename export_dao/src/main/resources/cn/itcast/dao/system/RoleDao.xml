@@ -9,16 +9,20 @@
         <result column="company_id" property="companyId"/>
         <result column="company_name" property="companyName"/>
     </resultMap>
-
+    <!--查询全部-->
     <select id="findAll" resultMap="BaseResultMap">
          select  * from pe_role where  company_id=#{companyId}
     </select>
-
+    <!-- 根据id角色,查询此角色已经具有的模块   -->
+    <select id="findModulesByRoleId" resultType="string">
+        SELECT module_id FROM pe_role_module WHERE role_id=#{roleId]}
+    </select>
+    <!--保存-->
     <insert id="save">
     insert into pe_role (role_id, name, remark, order_no,company_id, company_name)
          values (#{id}, #{name}, #{remark}, #{orderNo}, #{companyId}, #{companyName})
      </insert>
-
+    <!--修改-->
     <update id="update">
         update  pe_role
         set name = #{name},
@@ -26,36 +30,22 @@
            order_no = #{orderNo}
          where role_id = #{id}
     </update>
-
+    <!--根据id查询-->
     <select id="findById" resultMap="BaseResultMap">
         select * from pe_role where  role_id=#{id}
     </select>
-
+    <!--删除-->
     <delete id="delete">
         delete from pe_role where role_id=#{id}
     </delete>
-    <!-- <select id="findAll" parameterType="string" resultMap="BaseResultMap">
-         select * from pe_role where company_id=#{companyId}
-     </select>
 
-     <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
-         select * from pe_role where role_id = #{id}
-     </select>
+    <!--根据角色id删除角色模块中间表数据-->
+    <delete id="deleteRoleModule">
+        delete from pe_role_module where role_id= #{roleId}
+    </delete>
 
-     <delete id="delete" parameterType="java.lang.String">
-         delete from pe_role where role_id = #{id}
-     </delete>
-
-     <insert id="save" parameterType="cn.itcast.domain.system.Role">
-         insert into pe_role (role_id, name, remark, order_no,company_id, company_name)
-         values (#{id}, #{name}, #{remark}, #{orderNo}, #{companyId}, #{companyName})
-     </insert>
-
-     <update id="update" parameterType="cn.itcast.domain.system.Role">
-         update pe_role
-         set name = #{name},
-           remark = #{remark},
-           order_no = #{orderNo}
-         where role_id = #{id}
-     </update>-->
+    <!--项角色模块中间表保存数据-->
+    <insert id="saveRoleModule">
+        insert into pe_role_module(role_id,module_id) values (#{roleId},#{moduleId})
+    </insert>
 </mapper>
