@@ -1,5 +1,4 @@
 package cn.itcast.web.controller.system;
-
 import cn.itcast.domain.system.Dept;
 import cn.itcast.domain.system.Role;
 import cn.itcast.domain.system.User;
@@ -14,23 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
-
 @Controller
 @RequestMapping("/system/user")
 public class UserController extends BaseController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private DeptService deptService;
-
     @Autowired
     private RoleService roleService;
-
-
-
     //保存角色
     @RequestMapping("/changeRole")
 
@@ -58,15 +50,12 @@ public class UserController extends BaseController {
         request.setAttribute("userRoleStr",userRoleStr);
         return"system/user/user-role";
     }
-
-
     //删除
     @RequestMapping("/delete")
     public String delete(String id) {
         userService.delete(id);
         return "redirect:/system/user/list.do";
     }
-
     //    根据企业id保存或修改用户
     @RequestMapping("/toUpdate")
     public String toUpdate(String id) {
@@ -106,7 +95,6 @@ public class UserController extends BaseController {
         request.setAttribute("deptList", list);
         return "system/user/user-add";
     }
-
 
     //    根据登录人企业id查询用户列表(分页)
     @RequestMapping("/list")

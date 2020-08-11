@@ -1,9 +1,8 @@
-package cn.itcast.web.controller.aspect;
+package cn.itcast.web.aspect;
 
 import cn.itcast.domain.system.SysLog;
 import cn.itcast.domain.system.User;
 import cn.itcast.service.system.SysLogService;
-import com.sun.corba.se.impl.orbutil.concurrent.Sync;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

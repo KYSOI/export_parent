@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--配置springmvc-->
+    <context:component-scan base-package="cn.itcast.controller"></context:component-scan>
+
+    <!--视图解析器:略-->
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+
+    <!--spring和dubbo消费者整合-->
+    <!--应用名-->
+    <dubbo:application name="export_portal_web"></dubbo:application>
+    <!--注册中心-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"></dubbo:registry>
+    <!--注解扫描-->
+    <dubbo:annotation package="cn.itcast.controller"></dubbo:annotation>
+    <!--通过在消费者端加入关闭启动检查-->
+    <!-- 错误重试和超时在消费者调用提供者过程中，由于网络波动，可能造成暂时的链接失败通过在消费者端配置重试次数=0-->
+    <dubbo:consumer check="false" retries="0"></dubbo:consumer>
+
+</beans>

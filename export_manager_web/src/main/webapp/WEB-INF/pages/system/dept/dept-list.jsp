@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <%--
     shiro提供了很多的jsp页面标签
         通过比较所有的权限以及当前指定的权限，控制按钮或菜单的展示
@@ -64,8 +64,10 @@
                     <div class="form-group form-inline">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default" title="新建" onclick='location.href="${ctx}/system/dept/toAdd.do"'><i class="fa fa-file-o"></i> 新建</button>
-                         <%--   <shiro:hasPermission name="删除部门"></shiro:hasPermission>--%>
+                            <shiro:hasPermission name="删除部门">
                                 <button type="button" class="btn btn-default" title="删除" onclick='deleteById()'><i class="fa fa-trash-o"></i> 删除</button>
+                            </shiro:hasPermission>
+
                             <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
                         </div>
                     </div>

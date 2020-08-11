@@ -1,12 +1,14 @@
 package cn.itcast.web.controller;
 
-
 import cn.itcast.domain.system.Module;
 import cn.itcast.domain.system.User;
 import cn.itcast.service.system.ModuleService;
 import cn.itcast.service.system.UserService;
 import cn.itcast.util.Encrypt;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -17,39 +19,38 @@ import java.util.List;
 
 @Controller
 public class LoginController extends BaseController {
-
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private ModuleService moduleService;
 
-    //登录
+    //基于shiro的用户认证
     @RequestMapping("/login")
     public String login(String email, String password) {
-        //    判断邮箱和密码是否为空(为空就需要重新登录)
+        //判断,如果邮箱或者密码错误重新登录
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password)) {
             return "forward:/login.jsp";
         }
-
-        password = Encrypt.md5(password, email);
-        //根据邮箱查询用户
-        User user = userService.findByEmail(email);
-        System.out.println(user.getPassword());
-        //判断用户对象是否存在摩玛是否一致
-        if (user != null && user.getPassword().equals(password)) {
-            //一致登录成功
-            session.setAttribute("loginUser",user);
-
-            //登录成功后,查询此用户所有的操作权限
+        try {
+            // 获取subject工具类
+            Subject subject = SecurityUtils.getSubject();
+            // 调用subject的login方法进入shiro登录
+            UsernamePasswordToken upToken = new UsernamePasswordToken(email, password);
+            subject.login(upToken);
+            //  如果正常执行无异常,登录成功
+            //  从shiro中获取安全数据,登录成功
+            User user = (User) subject.getPrincipal();
+            //  将对象存入session
+            session.setAttribute("loginUser", user);
+            //  将用户对象和模块列表对象存入session
             List<Module> list = moduleService.findByUser(user);
-            session.setAttribute("modules",list);
+            session.setAttribute("modules", list);
+            //  跳转主页
             return "home/main";
-        } else {
-            //用户不存在或者密码错误(登录失败
-            request.setAttribute("error","用户名或密码错误");
-            // 跳转到登录页面
+        } catch (Exception e) {
+            e.printStackTrace();
+            //    如果判处异常,登录失败(用户名或者密码错误)
+            request.setAttribute("error", "用户名或密码错误");
             return "forward:/login.jsp";
         }
     }
@@ -57,6 +58,9 @@ public class LoginController extends BaseController {
     //退出
     @RequestMapping(value = "/logout", name = "用户登出")
     public String logout() {
+        //获取subject工具类
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
         //SecurityUtils.getSubject().logout();   //登出
         return "forward:login.jsp";
     }
@@ -65,6 +69,4 @@ public class LoginController extends BaseController {
     public String home() {
         return "home/home";
     }
-
-
 }
