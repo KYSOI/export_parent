@@ -32,10 +32,19 @@
     <!--配置spring整合dubbo消费者-->
     <dubbo:application name="export_manager_web"></dubbo:application>
 
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"></dubbo:registry>
+    <dubbo:registry address="zookeeper://192.168.133.128:2181"></dubbo:registry>
 
     <dubbo:annotation package="cn.itcast.web"></dubbo:annotation>
 
     <dubbo:consumer check="false" retries="0"></dubbo:consumer>
 
+
+    <!-- 图片解析器
+     id 的值是固定的-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置上传文件的最大尺寸为 5MB -->
+        <property name="maxUploadSize">
+            <value>5242880</value>
+        </property>
+    </bean>
 </beans>

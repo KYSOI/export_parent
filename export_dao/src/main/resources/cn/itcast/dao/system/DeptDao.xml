@@ -3,7 +3,6 @@
 .org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.itcast.dao.system.DeptDao">
 
-
     <resultMap id="BaseResultMap" type="cn.itcast.domain.system.Dept">
         <id column="dept_id" property="id"></id>
         <result column="dept_name" property="deptName"></result>
@@ -29,9 +28,26 @@
     <select id="findById" resultMap="BaseResultMap">
         select  * from pe_dept where dept_id=#{id}
     </select>
+    <!--
+          根据parentId获取最大的子部门id
+          如果parentId为空表示添加一级部门，查询最大的一级部门id
+          如果parentId不为空，根据父部门id查询
+      -->
+    <select id="findMaxId" resultType="String">
+        SELECT MAX(dept_id) FROM pe_dept
+        <where>
+            <choose>
+                <when test=" parentId  != null and parentId  != '' ">
+                    parent_id=#{parentId}
+                </when>
+                <otherwise>
+                    parent_id is null
+                </otherwise>
+            </choose>
+        </where>
+    </select>
 
-
-<!--    保存-->
+    <!--    保存-->
     <insert id="save">
         insert into pe_dept
         (
@@ -53,7 +69,7 @@
         )
     </insert>
 
-<!--    修改-->
+    <!--    修改-->
     <update id="update">
         update pe_dept
         set
@@ -63,8 +79,9 @@
         where dept_id=#{id}
     </update>
 
-<!--删除-->
+    <!--删除-->
     <delete id="delete">
         delete from pe_dept where dept_id=#{id}
     </delete>
+
 </mapper>

@@ -1,6 +1,7 @@
 package cn.itcast.service.cargo.impl;
 
 import cn.itcast.dao.cargo.ContractDao;
+import cn.itcast.vo.ContractProductVo;
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
 import cn.itcast.service.cargo.ContractService;
@@ -55,5 +56,10 @@ public class ContractServiceImpl implements ContractService {
     //根据id查询
     public Contract findById(String id) {
         return contractDao.selectByPrimaryKey(id);
+    }
+
+    //根据船期查询出货表数据
+    public List<ContractProductVo> findByShipTime(String shipTime) {
+        return contractDao.findByShipTime(shipTime);
     }
 }

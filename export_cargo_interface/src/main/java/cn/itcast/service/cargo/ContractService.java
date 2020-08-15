@@ -1,10 +1,11 @@
 package cn.itcast.service.cargo;
 
+import cn.itcast.vo.ContractProductVo;
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
 import com.github.pagehelper.PageInfo;
 
-import java.util.Map;
+import java.util.List;
 
 
 public interface ContractService {
@@ -28,4 +29,7 @@ public interface ContractService {
 
     //根据id查询
     Contract findById(String id);
+
+
+    List<ContractProductVo> findByShipTime(String shipTime);
 }

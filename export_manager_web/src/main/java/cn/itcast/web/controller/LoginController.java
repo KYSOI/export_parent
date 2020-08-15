@@ -55,6 +55,8 @@ public class LoginController extends BaseController {
         }
     }
 
+
+
     //退出
     @RequestMapping(value = "/logout", name = "用户登出")
     public String logout() {

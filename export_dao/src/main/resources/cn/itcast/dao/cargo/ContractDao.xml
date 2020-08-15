@@ -83,6 +83,20 @@
             order by ${orderByClause}
         </if>
     </select>
+    <!--根据船期查询出货表数据-->
+    <select id="findByShipTime" resultType="cn.itcast.vo.ContractProductVo">
+         SELECT
+            co.custom_name customName,
+            co.contract_no contractNo,
+            cp.product_no productNo,
+            cp.cnumber cnumber,
+            cp.factory_name factoryName,
+            co.delivery_period deliveryPeriod,
+            co.ship_time shipTime,
+            co.trade_terms tradeTerms
+            FROM  co_contract co , co_contract_product cp
+             WHERE co.id=cp.contract_id AND co.ship_time LIKE #{shipTime}
+    </select>
 
     <!--根据id查询-->
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">

@@ -30,6 +30,12 @@ public class BaseController {
     }
 
     /**
+     * 获取当前登录用户
+     */
+    protected  User getLoginUser() {
+        return (User) session.getAttribute("loginUser");
+    }
+    /**
      * 2、模拟当前登录用户所属的企业名称
      */
     protected String getLoginCompanyName(){

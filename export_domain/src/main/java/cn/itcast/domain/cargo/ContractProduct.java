@@ -3,6 +3,8 @@ package cn.itcast.domain.cargo;
 
 
 import cn.itcast.domain.BaseEntity;
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,25 +12,34 @@ import java.util.List;
 /**
  * 合同下货物的实体类
  */
-
+@ExcelIgnoreUnannotated
 public class ContractProduct extends BaseEntity implements Serializable {
 
 	private String id;
+
+	@ExcelProperty("货号")
 	private String productNo;		//货号
 	private String productImage;	//图片路径
+	@ExcelProperty("货物描述")
 	private String productDesc;		//货描
+	@ExcelProperty("装率")
 	private String loadingRate;		//报运：装率    1/3
+	@ExcelProperty("箱数")
 	private Integer boxNum;			//报运：箱数    100
+	@ExcelProperty("包装单位")
 	private String packingUnit;		//包装单位：PCS/SETS   支/箱
+	@ExcelProperty("数量")
 	private Integer cnumber;		//数量                            300
 	private Integer outNumber;		//报运：出货数量            200
 	private Integer finished;		//报运：是否完成		no
+	@ExcelProperty("要求")
 	private String productRequest;	//要求
+	@ExcelProperty("单价")
 	private Double price;			//单价
 	private Double amount;			//总金额，冗余
 	private Integer orderNo;		//排序号
 	private String contractId;      //合同号
-
+	@ExcelProperty("生产厂家")
 	private String factoryName;		//厂家名称，冗余字段
 	private String factoryId;
 

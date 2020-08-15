@@ -1,5 +1,6 @@
 package cn.itcast.dao.cargo;
 
+import cn.itcast.vo.ContractProductVo;
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
 
@@ -21,4 +22,6 @@ public interface ContractDao {
 
 	//更新
     int updateByPrimaryKeySelective(Contract record);
+
+    List<ContractProductVo> findByShipTime(String shipTime);
 }

@@ -18,5 +18,12 @@
             <artifactId>export_dao</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!--对工具类模块的依赖-->
+        <dependency>
+            <groupId>cn.itcast</groupId>
+            <artifactId>export_commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 </project>
