@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
- * 报运单商品service实现类
+ * 报运单商品
  */
 @Service
 public class ExportProductServiceImpl implements ExportProductService {
@@ -18,9 +18,8 @@ public class ExportProductServiceImpl implements ExportProductService {
     @Autowired
     private ExportProductDao exportProductDao;
 
-    //查询所有
+    @Override
     public List<ExportProduct> findAll(ExportProductExample exportProductExample) {
         return exportProductDao.selectByExample(exportProductExample);
     }
-
 }

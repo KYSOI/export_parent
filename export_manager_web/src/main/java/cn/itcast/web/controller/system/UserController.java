@@ -5,7 +5,7 @@ import cn.itcast.domain.system.User;
 import cn.itcast.service.system.DeptService;
 import cn.itcast.service.system.RoleService;
 import cn.itcast.service.system.UserService;
-import cn.itcast.util.Encrypt;
+import cn.itcast.utils.Encrypt;
 import cn.itcast.web.controller.BaseController;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;

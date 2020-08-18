@@ -1,6 +1,6 @@
 package cn.itcast.web.shiro;
 
-import cn.itcast.util.Encrypt;
+import cn.itcast.utils.Encrypt;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;

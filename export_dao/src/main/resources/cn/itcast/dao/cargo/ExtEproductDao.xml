@@ -22,7 +22,7 @@
 
     <sql id="Base_Column_List">
         id, factory_id, export_product_id,export_id, product_no, product_image, product_desc,
-        cnumber, packing_unit, price, amount, order_no, company_id, company_name,product_request
+        cnumber, packing_unit, price, amount, order_no, company_id, company_name, product_request
     </sql>
 
     <sql id="Example_Where_Clause">

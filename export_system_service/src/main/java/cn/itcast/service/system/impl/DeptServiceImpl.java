@@ -3,14 +3,13 @@ package cn.itcast.service.system.impl;
 import cn.itcast.dao.system.DeptDao;
 import cn.itcast.domain.system.Dept;
 import cn.itcast.service.system.DeptService;
-import cn.itcast.util.DeptCodeGens;
+import cn.itcast.utils.DeptCodeGens;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class DeptServiceImpl implements DeptService {

@@ -1,4 +1,4 @@
-package cn.itcast.util;
+package cn.itcast.utils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +91,6 @@ public class DownloadUtil {
 	}
 
 	/**
-	 * by tony 2013-10-17
 	 * @param byteArrayOutputStream 将文件内容写入ByteArrayOutputStream
 	 * @param response HttpServletResponse	写入response
 	 * @param returnName 返回的文件名

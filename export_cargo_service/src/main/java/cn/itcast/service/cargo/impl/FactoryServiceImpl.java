@@ -14,7 +14,8 @@ public class FactoryServiceImpl implements FactoryService {
 
     @Autowired
     private FactoryDao factoryDao;
-    //查询所有的厂家
+
+    //查询全部
     public List<Factory> findAll(FactoryExample example) {
         return factoryDao.selectByExample(example);
     }

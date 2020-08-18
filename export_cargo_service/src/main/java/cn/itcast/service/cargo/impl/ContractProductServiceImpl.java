@@ -17,102 +17,128 @@ import java.util.UUID;
 public class ContractProductServiceImpl implements ContractProductService {
 
     @Autowired
-    private ContractProductDao contractProductDao;
+    private ContractProductDao contractProductDao; //货物dao
 
     @Autowired
-    private ContractDao contractDao;
+    private ContractDao contractDao; //合同dao
 
     @Autowired
-    private ExtCproductDao extCproductDao;
+    private ExtCproductDao extCproductDao; //附件dao
 
     /**
-     * 保存
-     * 参数:货物对象
-     * 购销合同id:contractId
-     * 单价:price
-     * 数量:Cnumber
-     * 总金额:Amount
-     * 购销合同表中字段
-     * totalAmount:总金额
-     * proNum:货物数量
-     * extNum:附件数量
+     * 保存购销合同货物
+     *  参数：contractProduct（货物对象）
+     *  属性：
+     *      contractId:所属的购销合同的id
+     *      cnumber：货物数量
+     *      price：单价
+     *      amount：总金额
+     *  购销合同对象：Contract
+     *      proNum：货物数量
+     *      totalAmount：总金额
      *
-     * @param
      */
     public void save(ContractProduct cp) {
-        double money = 0.0;
-        //    计算当前货物总金额
-        if (cp.getPrice() != null && cp.getCnumber() != null) {
-            money = cp.getPrice() * cp.getCnumber();
+        //1、计算保存的货物总金额
+        double money = 0d;
+        if(cp.getCnumber() != null && cp.getPrice() != null) {
+            money = cp.getCnumber() * cp.getPrice();
         }
         cp.setAmount(money);
-        //    设置获取id
+        //2、设置货物的id
         cp.setId(UUID.randomUUID().toString());
-        //    保存货物到数据库中
+        //3、调用dao保存货物
         contractProductDao.insertSelective(cp);
-        //    根据购销合同id查询购销合同
+        //4、根据合同id查询购销合同
         Contract contract = contractDao.selectByPrimaryKey(cp.getContractId());
-        //    设置合同总金额(原有金额+添加的货物金额
+        //5、设置合同的总金额
         contract.setTotalAmount(contract.getTotalAmount() + money);
-        //    修改合同的货物数量
-        contract.setProNum(contract.getExtNum() + 1);
-        //    更新购销合同
-        contractDao.updateByPrimaryKeySelective(contract);
-    }
-
-    // 更新货物
-    public void update(ContractProduct newCp) {
-        //    计算更新之后的总金额
-        double newMoney = 0.0;
-        if (newCp.getPrice() != null && newCp.getCnumber() != null) {
-            newMoney = newCp.getPrice() * newCp.getCnumber();
-        }
-        newCp.setAmount(newMoney);
-
-        //    获取更新之前的总金额(查询数据库)
-        ContractProduct oldCp = contractProductDao.selectByPrimaryKey(newCp.getId());
-        Double oldMoney = oldCp.getAmount();//总金额
-
-        //    更新货物
-        contractProductDao.updateByPrimaryKeySelective(newCp);
-        //    根据id查询购销合同
-        Contract contract = contractDao.selectByPrimaryKey(newCp.getContractId());
-        //    设置购销合同总金额
-        contract.setTotalAmount(contract.getTotalAmount() - oldMoney + newMoney);
-        //    更新购销合同
+        //6、设置合同的货物数
+        contract.setProNum(contract.getProNum() + 1);
+        //7、更新购销合同
         contractDao.updateByPrimaryKeySelective(contract);
     }
 
     /**
-     * 删除货物
-     * 参数：货物id
-     * 附件对象：ExtCproduct ，其中包含一个contractProductId的字段（表示货物id）
+     * 修改货物
+     *  参数：
+     *      contractProduct（货物对象）
+     *      属性：
+     *         id：货物id
+     *         contractId:所属的购销合同的id
+     *         cnumber：货物数量
+     *         price：单价
+     *         amount：总金额
+     *      购销合同对象：Contract
+     *         proNum：货物数量
+     *         totalAmount：总金额
+     */
+    public void update(ContractProduct newCp) {
+        //1、计算货物更新后的总金额
+        double newMoney = 0d;
+        if(newCp.getCnumber() != null && newCp.getPrice() != null) {
+            newMoney = newCp.getCnumber() * newCp.getPrice();
+        }
+        newCp.setAmount(newMoney);
+        //2、获取货物更新前的总金额
+        ContractProduct oldCp = contractProductDao.selectByPrimaryKey(newCp.getId());
+        double oldMoney = oldCp.getAmount();
+        //3、更新货物
+        contractProductDao.updateByPrimaryKeySelective(newCp);
+        //4、根据合同id查询购销合同
+        Contract contract = contractDao.selectByPrimaryKey(newCp.getContractId());
+        //5、更新合同总金额（合同总金额 - 修改之前的金额 + 修改后的金额）
+        contract.setTotalAmount(contract.getTotalAmount() - oldMoney + newMoney);
+        //6、更新购销合同
+        contractDao.updateByPrimaryKeySelective(contract);
+    }
+
+    /**
+     * 根据id删除货物
+     *  参数:id(货物id)
+     *      contractProduct（货物对象）
+     *      属性：
+     *          id：货物id
+     *          contractId:所属的购销合同的id
+     *          cnumber：货物数量
+     *          price：单价
+     *          amount：总金额
+     *      购销合同对象：Contract
+     *          proNum：货物数量
+     *          extNum:附件批次数量
+     *          totalAmount：总金额
+     *      附件对象: ExtCproduct
+     *          cnumber：货物数量
+     *          price：单价
+     *          amount：总金额
+     *          contractProductId:所属货物id
+     *
      */
     public void delete(String id) {
-        //  1、根据货物id查询货物
+        //1、根据货物id查询货物
         ContractProduct cp = contractProductDao.selectByPrimaryKey(id);
-        //  根据id删除货物
+        double deleteMoney = cp.getAmount();
+        //2、删除货物
         contractProductDao.deleteByPrimaryKey(id);
-        //   根据货物id查询所有的货物附件
+        //3、根据货物id查询此货物的所有附件
         ExtCproductExample example = new ExtCproductExample();
         ExtCproductExample.Criteria criteria = example.createCriteria();
-        criteria.andContractIdEqualTo(id);
-        List<ExtCproduct> ecps = extCproductDao.selectByExample(example);//所有附件
-        //  计算删除的总金额(货物金额+附件金额)
-        Double money = cp.getAmount();
-        //  循环删除所有的附件
+        criteria.andContractProductIdEqualTo(id);
+        List<ExtCproduct> ecps = extCproductDao.selectByExample(example);
+        //4、循环所有的附件列表
         for (ExtCproduct ecp : ecps) {
-            money += ecp.getAmount();
-            extCproductDao.deleteByPrimaryKey(ecp.getId());//根据附件id删除附件
+            //5、删除每个附件
+            extCproductDao.deleteByPrimaryKey(ecp.getId());
+            //6、记录删除附件的总金额
+            deleteMoney += ecp.getAmount();
         }
-        // 根据id查询购销合同
+        //7、根据id查询购销合同
         Contract contract = contractDao.selectByPrimaryKey(cp.getContractId());
-        // 设置购销合同总金额
-        contract.setTotalAmount(contract.getTotalAmount() - money);
-        // 设置货物数,附件数
-        contract.setProNum(contract.getProNum() - 1);//发货数
+        //8、设置购销合同的总金额，附件，货物数
+        contract.setTotalAmount(contract.getTotalAmount() - deleteMoney);
+        contract.setProNum(contract.getProNum() - 1);//货物数
         contract.setExtNum(contract.getExtNum() - ecps.size());
-        //更新购销合同
+        //9、更新购销合同
         contractDao.updateByPrimaryKeySelective(contract);
     }
 
@@ -123,20 +149,19 @@ public class ContractProductServiceImpl implements ContractProductService {
 
     //分页查询
     public PageInfo findAll(ContractProductExample example, int page, int size) {
-        PageHelper.startPage(page, size);
+        PageHelper.startPage(page,size);
         List<ContractProduct> list = contractProductDao.selectByExample(example);
         return new PageInfo(list);
     }
 
     /**
-     * 批量保存货物
+     * 批量保存
      */
     public void saveAll(List<ContractProduct> list) {
-        if (list!=null) {
+        if(list != null) {
             for (ContractProduct contractProduct : list) {
                 save(contractProduct);
             }
         }
-
     }
 }

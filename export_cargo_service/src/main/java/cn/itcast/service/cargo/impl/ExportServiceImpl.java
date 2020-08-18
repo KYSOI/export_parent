@@ -1,42 +1,46 @@
 package cn.itcast.service.cargo.impl;
 
+
 import cn.itcast.dao.cargo.*;
 import cn.itcast.domain.cargo.*;
 import cn.itcast.service.cargo.ExportService;
+import cn.itcast.vo.ExportProductResult;
+import cn.itcast.vo.ExportProductVo;
+import cn.itcast.vo.ExportResult;
+import cn.itcast.vo.ExportVo;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-
-/**
- * 报运单service接口实现类
- */
 @Service
 public class ExportServiceImpl implements ExportService {
 
     @Autowired
-    private ExportDao exportDao;
+    private ExportDao exportDao;  //报运单DAO
 
     @Autowired
-    private ContractDao contractDao;
+    private ContractDao contractDao; //合同DAO
 
     @Autowired
-    private ContractProductDao contractProductDao;
+    private ExportProductDao exportProductDao; //报运单商品DAO
 
     @Autowired
-    private ExportProductDao exportProductDao;
+    private ContractProductDao contractProductDao;//合同货物DAO
 
     @Autowired
-    private ExtCproductDao extCproductDao;
+    private ExtEproductDao extEproductDao;// 报运单附件DAO
 
     @Autowired
-    private ExtEproductDao extEproductDao;
+    private ExtCproductDao extCproductDao;//合同附件DAO
+
 
     /**
      * 保存报运单
@@ -65,7 +69,7 @@ public class ExportServiceImpl implements ExportService {
         for (String cid : cids) {
             Contract contract = contractDao.selectByPrimaryKey(cid);
             //3、拼接合同号
-            customerContract+= contract.getContractNo() + " ";
+            customerContract += contract.getContractNo() + " ";
             //4、更新购销合同的状态  2 （已报运）
             contract.setState(2);
             contractDao.updateByPrimaryKeySelective(contract);
@@ -118,38 +122,112 @@ public class ExportServiceImpl implements ExportService {
     }
 
     /**
-     * 更新
-     * 参数；export对象
-     * * 报运单主体数据（更新即可）
-     * * 此报运单下更新的所有商品（exportProducts）
+     * 更新报运单（保存单数据，报运单商品）
      */
     public void update(Export export) {
-        //1.更新报运单
+        //1、更新报运单
         exportDao.updateByPrimaryKeySelective(export);
-        //2.循环报运单下更新的所有商品，更新每个商品
-        if(export.getExportProducts() != null) {
+        //2、判断报运单商品是否存在
+        if (export.getExportProducts() != null) {
+            //3、如果存在，循环每个商品，更新
             for (ExportProduct ep : export.getExportProducts()) {
                 exportProductDao.updateByPrimaryKeySelective(ep);
             }
         }
     }
 
-    /**
-     * 删除
-     */
+    //无用
     public void delete(String id) {
 
     }
 
-    //根据id查询
+    @Override
     public Export findById(String id) {
         return exportDao.selectByPrimaryKey(id);
     }
 
-    //分页
+
+    @Override
     public PageInfo findAll(ExportExample example, int page, int size) {
         PageHelper.startPage(page, size);
         List<Export> list = exportDao.selectByExample(example);
         return new PageInfo(list);
+    }
+
+    /**
+     * 海关保运
+     * 参数：报运单ID
+     */
+    public void exportE(String id) {
+        //1.根据id查询报运单
+        Export export = exportDao.selectByPrimaryKey(id);
+        //2.根据报运单id查询报运单的所有商品
+        ExportProductExample example = new ExportProductExample();
+        ExportProductExample.Criteria criteria = example.createCriteria();
+        //条件：商品中有一个字段ExportID（商品所属的报运单id）
+        criteria.andExportIdEqualTo(id);
+        List<ExportProduct> eps = exportProductDao.selectByExample(example);
+        //3.将Export对象转化为海关保运的ExportVo对象
+        ExportVo evo = new ExportVo();
+        BeanUtils.copyProperties(export, evo);
+        //设置报运单id
+        evo.setExportId(export.getId());
+        //4.将ExportProduct对象转化为海关保运的ExportProduct对象
+        ArrayList<ExportProductVo> epvos = new ArrayList<>();
+        for (ExportProduct ep : eps) {
+            ExportProductVo epvo = new ExportProductVo();
+            BeanUtils.copyProperties(ep, epvo);
+            epvo.setExportProductId(ep.getId());
+            epvos.add(epvo);
+        }
+        evo.setProducts(epvos);//报运单vo对象中包含了所有的商品
+        //5.通过WebClient工具类发送数据
+        WebClient wc = WebClient.create("http://localhost:9001/ws/export/ep");
+        /**
+         * 参数
+         *  传递的数据对象，
+         *  响应的数据类型，
+         * 返回值
+         *  响应数据
+         */
+        Integer res = wc.post(evo, Integer.class);
+        //6.更新数据库状态（2）
+        if (res == 0) {
+            export.setState(2);
+            exportDao.updateByPrimaryKeySelective(export);
+        }
+    }
+
+    //查询所有的报运单
+    public List<Export> findAll(ExportExample example) {
+        return exportDao.selectByExample(example);
+    }
+
+
+    /**
+     * 更新保运结果
+     *  ExportResult : 海关的保运结果
+     *          exportId： 报运单id
+     *          state：海关的保运状态
+     *          remark：保运结果的中文说明
+     *          products ：
+     *              报运单的所有商品信息
+     *                  exportProductId：商品id
+     *                  tax：商品关说
+     */
+    public void updateE(ExportResult result) {
+        //1.查询报运单
+        Export export = exportDao.selectByPrimaryKey(result.getExportId());
+        //2.更新报运单数据
+        export.setState(result.getState());
+        export.setRemark(result.getRemark());
+        exportDao.updateByPrimaryKeySelective(export);
+        //3.循环报运单所有商品
+        for (ExportProductResult product : result.getProducts()) {
+            ExportProduct exportProduct = exportProductDao.selectByPrimaryKey(product.getExportProductId());
+            exportProduct.setTax(product.getTax());
+            //4.更新报运单税
+            exportProductDao.updateByPrimaryKeySelective(exportProduct);
+        }
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.itcast.dao.stat.StatDao">
+
+    <!--生产厂家的销量数据-->
+        <select id="findFactoryData" resultType="map">
+           SELECT SUM(amount) value ,factory_name name FROM co_contract_product
+        WHERE company_id=#{companyId} GROUP BY factory_name
+        </select>
+    <!--产品销量排行榜数据-->
+
+    <!--系统访问压力图数据-->
+
+</mapper>

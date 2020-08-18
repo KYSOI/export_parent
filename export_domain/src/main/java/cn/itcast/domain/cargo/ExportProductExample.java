@@ -1,5 +1,6 @@
 package cn.itcast.domain.cargo;
 
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;

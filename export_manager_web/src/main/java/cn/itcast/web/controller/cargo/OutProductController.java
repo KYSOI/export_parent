@@ -1,20 +1,28 @@
 package cn.itcast.web.controller.cargo;
 
-import cn.itcast.vo.ContractProductVo;
+import cn.itcast.domain.cargo.Contract;
+import cn.itcast.domain.cargo.ContractExample;
+import cn.itcast.domain.system.User;
 import cn.itcast.service.cargo.ContractService;
-import cn.itcast.util.DownloadUtil;
+import cn.itcast.utils.DownloadUtil;
+import cn.itcast.vo.ContractProductVo;
 import cn.itcast.web.controller.BaseController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.github.pagehelper.PageInfo;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -40,32 +48,32 @@ public class OutProductController extends BaseController {
      */
     @RequestMapping("/printTemplate")
     public void printTemplate(String inputDate) throws Exception {
-        //1.准备数据
+        //1、数据准备
         List<ContractProductVo> list = contractService.findByShipTime(inputDate+"%");
         Map map = new HashMap<>();
-        inputDate = inputDate.replaceAll("-0","-").replaceAll("-","年");
+        inputDate=inputDate.replaceAll("-0", "-").replaceAll("-", "年");
         map.put("time",inputDate);
-        map.put("title1","客户名称");
-        //2.设置下载信息
+        map.put("title1","客户");
+        //2、设置下载响应头信息
         response.setContentType("application/vnd.ms-excel"); //下载excel
         response.setCharacterEncoding("utf-8");
         String fileName = URLEncoder.encode("出货表", "UTF-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-        //3.加载excel模板
-        String path = session.getServletContext().getRealPath("/")+"/make/tOUTPRODUCT.xlsx";
-        //4.创建EasyExcel的excelWtire对象( 用于数据填充)
+        //3、加载excel模板
+        String path = session.getServletContext().getRealPath("/") + "/make/tOUTPRODUCT.xlsx";
+        //4、创建EasyExcel的ExcelWriter对象（用于数据填充）
         ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream())
-                .head(ContractProductVo.class) //设置表头
-                .withTemplate(path) //加载模板
+                .head(ContractProductVo.class)
+                .withTemplate(path)
                 .build();
         //获取sheet对象
         WriteSheet sheet = EasyExcel.writerSheet().build();
-        //5.调用方法完成填充map数据
+        //5、调用方法完成map数据的填充
         excelWriter.fill(map,sheet);
-        //6.调用方法完成填充list数据
+        //6、调用方法完成list数据的填充
         excelWriter.fill(list,sheet);
-        //7.属性资源，完成下载
-        excelWriter.finish(); //下载excel文件，释放内存资源
+        //7、调用finish方法，完成excel文件下载
+        excelWriter.finish(); //下载excel，释放内存
     }
 
 

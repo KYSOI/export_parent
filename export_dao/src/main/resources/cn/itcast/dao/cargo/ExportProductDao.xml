@@ -25,7 +25,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, export_id, factory_id,factory_name, product_no, packing_unit, cnumber, box_num,
+        id, export_id, factory_id,factory_name , product_no, packing_unit, cnumber, box_num,
         gross_weight, net_weight, size_length, size_width, size_height, ex_price, price,
         tax, order_no, company_id, company_name
      </sql>

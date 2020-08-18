@@ -8,7 +8,7 @@ import com.github.pagehelper.PageInfo;
 import java.util.List;
 
 
-public interface ContractService {
+    public interface ContractService {
 
 
     //分页查询
@@ -16,7 +16,7 @@ public interface ContractService {
     /**
      * 查询条件：companyId
      */
-    PageInfo findAll(int page, int size, ContractExample example);
+    PageInfo findAll(int page,int size,ContractExample example);
 
     //保存
     void save(Contract contract);

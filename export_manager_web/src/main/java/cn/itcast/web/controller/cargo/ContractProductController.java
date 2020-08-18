@@ -6,8 +6,7 @@ import cn.itcast.domain.cargo.Factory;
 import cn.itcast.domain.cargo.FactoryExample;
 import cn.itcast.service.cargo.ContractProductService;
 import cn.itcast.service.cargo.FactoryService;
-import cn.itcast.util.ImageUploadUtils;
-
+import cn.itcast.utils.ImageUploadUtils;
 import cn.itcast.web.controller.BaseController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.excel.EasyExcel;
@@ -218,18 +217,25 @@ public class ContractProductController extends BaseController {
      */
     @RequestMapping("/import")
     public String importExcel(String contractId,MultipartFile file) throws Exception {
-        List<ContractProduct> list = EasyExcel.read(file.getInputStream())
-                .head(ContractProduct.class) //设置表头，将数据转化为目标对象
-                .sheet(0) //读取第一页数据
-                .doReadSync(); //解析excel，获取所有的数据
 
-        for (ContractProduct contractProduct : list) {
-            System.out.println(contractProduct);
-            contractProduct.setContractId(contractId);
-            contractProduct.setCompanyId(getLoginCompanyId());
-            contractProduct.setCompanyName(getLoginCompanyName());
+        List<ContractProduct> list = EasyExcel.read(file.getInputStream())//读取文件
+                .sheet(0) //指定读取的页
+                .head(ContractProduct.class) //指定数据头（需要封装的对象）
+                .doReadSync();//解析Excel，获取所有数据
+
+        //设置关联属性
+        for (ContractProduct cp : list) {
+            System.out.println(cp);
+            cp.setContractId(contractId);
+            cp.setCompanyId(getLoginCompanyId());
+            cp.setCompanyName(getLoginCompanyName());
         }
+
+        System.out.println(list.size());
+
         contractProductService.saveAll(list);
-        return  "redirect:/cargo/contractProduct/list.do?contractId="+contractId;
+
+        //页面跳转
+        return "redirect:/cargo/contractProduct/list.do?contractId="+contractId;
     }
 }

@@ -1,10 +1,10 @@
 package cn.itcast.service.cargo.impl;
 
 import cn.itcast.dao.cargo.ContractDao;
-import cn.itcast.vo.ContractProductVo;
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ContractExample;
 import cn.itcast.service.cargo.ContractService;
+import cn.itcast.vo.ContractProductVo;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -14,19 +14,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * dubbo服务
- */
 @Service
 public class ContractServiceImpl implements ContractService {
 
     @Autowired
     private ContractDao contractDao;
 
-    /**
-     * 多条件的分页查询
-     */
-    public PageInfo findAll(int page, int size, ContractExample example) {
+    //分页
+    public PageInfo findAll(int page,int size,ContractExample example) {
         PageHelper.startPage(page,size);
         List<Contract> list = contractDao.selectByExample(example);
         return new PageInfo(list);
@@ -35,11 +30,9 @@ public class ContractServiceImpl implements ContractService {
     //保存
     public void save(Contract contract) {
         contract.setId(UUID.randomUUID().toString());
-        contract.setCreateTime(new Date()); //添加日期
-        contract.setTotalAmount(0d);        //购销合同总金额
-        contract.setProNum(0);              //货物数量
-        contract.setExtNum(0);              //附件数量
-        contract.setState(0);               //草稿（刚刚录入数据）
+        contract.setTotalAmount(0.0); //初始化合同总金额 0
+        contract.setState(0); //草稿状态
+        contract.setCreateTime(new Date()); //创建时间
         contractDao.insertSelective(contract);
     }
 
@@ -48,7 +41,7 @@ public class ContractServiceImpl implements ContractService {
         contractDao.updateByPrimaryKeySelective(contract);
     }
 
-    //删除
+    //根据id删除
     public void delete(String id) {
         contractDao.deleteByPrimaryKey(id);
     }

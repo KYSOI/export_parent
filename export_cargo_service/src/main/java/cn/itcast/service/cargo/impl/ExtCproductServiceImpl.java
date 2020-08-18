@@ -5,19 +5,18 @@ import cn.itcast.dao.cargo.ExtCproductDao;
 import cn.itcast.domain.cargo.Contract;
 import cn.itcast.domain.cargo.ExtCproduct;
 import cn.itcast.domain.cargo.ExtCproductExample;
-import cn.itcast.service.cargo.ContractService;
 import cn.itcast.service.cargo.ExtCproductService;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.PageInterceptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 附件service实现类
+ */
 @Service
 public class ExtCproductServiceImpl implements ExtCproductService {
 
@@ -25,93 +24,105 @@ public class ExtCproductServiceImpl implements ExtCproductService {
     private ExtCproductDao extCproductDao;//附件dao
 
     @Autowired
-    private ContractDao contractDao;
+    private ContractDao contractDao; //合同dao
 
 
     /**
      * 保存附件
-     * extCproduct ： 附件对象
-     * 属性：
-     * price：单价
-     * cnumber：数量
-     * amount：附件总金额
-     * contractId ： 合同id
-     * contractProductId ：货物id
+     *  参数：ExtCproduct（附件对象）
+     *  属性：
+     *      contractId:购销合同id
+     *      contractProductId:所属货物id
+     *      cnumber：数量
+     *      price：单价
+     *      amount：总金额
+     *  关联对象： contract（合同对象）
+     *      totalamount：合同总金额（货物金额+附件金额）
+     *      extnum：附件数量
      */
-    public void save(ExtCproduct ext) {
-        //    计算保存附件的总金额
-        double newMoney = 0.0;
-        if (ext.getPrice() != null && ext.getCnumber() != null) {
-            newMoney = ext.getPrice() * ext.getCnumber();
+    public void save(ExtCproduct ep) {
+        //1、计算附件的总金额
+        double money = 0d;
+        if(ep.getCnumber() != null && ep.getPrice() != null) {
+            money =  ep.getCnumber() * ep.getPrice();
         }
-        ext.setAmount(newMoney);
-        //    设置附件的id
-        ext.setId(UUID.randomUUID().toString());
-        //    保存附近
-        extCproductDao.insertSelective(ext);
-        //    根据合同id查询购销合同
-        Contract contract = contractDao.selectByPrimaryKey(ext.getContractId());
-        //    设置合同的总金额
-        contract.setTotalAmount(contract.getTotalAmount() + newMoney);
-        //    设置合同附件数
+        ep.setAmount(money);
+        //2、设置附件的ID
+        ep.setId(UUID.randomUUID().toString());
+        //3、保存附件
+        extCproductDao.insertSelective(ep);
+        //4、根据合同id查询购销合同
+        Contract contract = contractDao.selectByPrimaryKey(ep.getContractId());
+        //5、设置合同的总金额
+        contract.setTotalAmount(contract.getTotalAmount() + money);
+        //6、设置合同的附件数
         contract.setExtNum(contract.getExtNum() + 1);
-        //    更新合同
+        //7、更新合同
         contractDao.updateByPrimaryKeySelective(contract);
     }
 
+
     /**
-     * 进入修改页面
+     * 更新附件
+     *      参数：ExtCproduct（附件对象）
+     *      属性：
+     *          contractId:购销合同id
+     *          contractProductId:所属货物id
+     *          cnumber：数量
+     *          price：单价
+     *          amount：总金额
+     *      关联对象： contract（合同对象）
+     *          totalamount：合同总金额（货物金额+附件金额）
+     *          extnum：附件数量
      */
-
-    public void update(ExtCproduct newExt) {
-        // 设置修改后的总金额
-        double newMoney = 0.0;
-        if (newExt.getPrice() != null && newExt.getCnumber() != null) {
-            newMoney = newExt.getPrice() * newExt.getCnumber();
+    public void update(ExtCproduct newEp) {
+        //1、计算更新后的附件金额
+        double newMoney = 0d;
+        if(newEp.getCnumber() != null && newEp.getPrice() != null) {
+            newMoney =  newEp.getCnumber() * newEp.getPrice();
         }
-        newExt.setAmount(newMoney);
-        //    查询修改之前的总金额
-        ExtCproduct oldExt = extCproductDao.selectByPrimaryKey(newExt.getId());
-        Double oldMoney = oldExt.getAmount();//修改之前的金额
-        //   更新附件
-        extCproductDao.updateByPrimaryKeySelective(newExt);
-        //    根据合同id查询购销合同
-        Contract contract = contractDao.selectByPrimaryKey(newExt.getContractId());
-        //    设置合同总金额
+        newEp.setAmount(newMoney);
+        //2、查询更新前的附件金额
+        ExtCproduct oldEp = extCproductDao.selectByPrimaryKey(newEp.getId());
+        double oldMoney = oldEp.getAmount();
+        //3、更新附件
+        extCproductDao.updateByPrimaryKeySelective(newEp);
+        //4、根据id查询购销合同
+        Contract contract = contractDao.selectByPrimaryKey(newEp.getContractId());
+        //5、设置购销合同的总金额（总金额-更新前的+更新后的）
         contract.setTotalAmount(contract.getTotalAmount() - oldMoney + newMoney);
-        //    更新合同
+        //6、更新合同
         contractDao.updateByPrimaryKeySelective(contract);
     }
 
+
     /**
-     * 删除
-     * id:附件id
+     * 删除附件
+     *  参数：id（附件id）
      */
     public void delete(String id) {
-        //    根据附件id查询附件对象
-        ExtCproduct ext = extCproductDao.selectByPrimaryKey(id);
-        //    删除附件
+        //1、根据附件id查询附件
+        ExtCproduct extc = extCproductDao.selectByPrimaryKey(id);
+        //2、根据附件id删除数据
         extCproductDao.deleteByPrimaryKey(id);
-        //    根据合同id查询
-        Contract contract = contractDao.selectByPrimaryKey(ext.getContractId());
-    //    修改合同的总金额
-        contract.setTotalAmount(contract.getTotalAmount() - ext.getAmount());
-    //    修改附件数
+        //3、根据id查询购销合同
+        Contract contract = contractDao.selectByPrimaryKey(extc.getContractId());
+        //4、设置合同的总金额
+        contract.setTotalAmount(contract.getTotalAmount() - extc.getAmount());
+        //5、设置合同的附件数
         contract.setExtNum(contract.getExtNum() - 1);
-    //    更新合同
+        //6、更新合同
         contractDao.updateByPrimaryKeySelective(contract);
     }
 
-    //根据id查询
+    @Override
     public ExtCproduct findById(String id) {
         return extCproductDao.selectByPrimaryKey(id);
     }
 
-    //分页
-
+    @Override
     public PageInfo findAll(ExtCproductExample example, int page, int size) {
-        PageHelper.startPage(page, size);
-
+        PageHelper.startPage(page,size);
         List<ExtCproduct> list = extCproductDao.selectByExample(example);
         return new PageInfo(list);
     }

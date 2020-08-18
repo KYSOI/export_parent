@@ -1,4 +1,4 @@
-package cn.itcast.util;
+package cn.itcast.utils;
 
 import org.springframework.util.StringUtils;
 
@@ -61,7 +61,8 @@ public class DeptCodeGens {
 	 *      102 101
 	 *      102 102
 	 *
-	 *
+	 *  参数一： 父部门的ID
+	 *  参数二： 当前父部门中所有子部门的最大ID
 	 */
 	public static void main(String[] args) {
 		String subCode = DeptCodeGens.getSubCode("101", null);//获取下次保存的部门id

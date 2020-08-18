@@ -3,7 +3,7 @@ package cn.itcast.web.controller.cargo;
 import cn.itcast.domain.cargo.*;
 import cn.itcast.service.cargo.ExtCproductService;
 import cn.itcast.service.cargo.FactoryService;
-
+import cn.itcast.utils.ImageUploadUtils;
 import cn.itcast.web.controller.BaseController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.pagehelper.PageInfo;

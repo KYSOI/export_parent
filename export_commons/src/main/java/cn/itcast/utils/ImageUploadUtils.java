@@ -1,4 +1,4 @@
-package cn.itcast.util;
+package cn.itcast.utils;
 
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;

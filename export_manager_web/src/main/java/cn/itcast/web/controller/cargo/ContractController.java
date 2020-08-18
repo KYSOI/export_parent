@@ -56,8 +56,8 @@ public class ContractController extends BaseController {
             criteria.andCreateDeptLike(user.getDeptId()+"%");
         }
         //4、调用方法查询
-
-        PageInfo info = contractService.findAll(page,size,example);
+        //分页查询
+        PageInfo info = contractService.findAll(page, size, example);
 
         request.setAttribute("page", info);
 
@@ -160,8 +160,5 @@ public class ContractController extends BaseController {
         //重定向到列表
         return "redirect:/cargo/contract/list.do";
     }
-
-
-
 
 }

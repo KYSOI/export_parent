@@ -1,4 +1,4 @@
-package cn.itcast.util;
+package cn.itcast.utils;
 
 import org.apache.shiro.crypto.hash.Md5Hash;
 
@@ -19,7 +19,8 @@ public class Encrypt {
 		return new Md5Hash(password,salt,2).toString();
 	}
 
+	//调用main方法生成密码
 	public static void main(String[] args) {
-		System.out.println(new Md5Hash("123456","tony",2).toString());
+	    System.out.println(new Md5Hash("123456","tony",2).toString());
 	}
 }

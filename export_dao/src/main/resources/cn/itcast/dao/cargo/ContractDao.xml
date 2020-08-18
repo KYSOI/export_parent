@@ -69,6 +69,22 @@
         </where>
     </sql>
 
+    <!-- 根据船期查询出货表数据
+            resultType : 查询的字段和对象中属性一一对象
+    -->
+    <select id="findByShipTime" resultType="cn.itcast.vo.ContractProductVo">
+        SELECT
+            co.custom_name customName ,
+            co.contract_no contractNo,
+            cp.product_no productNo,
+            cp.cnumber cnumber,
+            cp.factory_name factoryName,
+            co.delivery_period deliveryPeriod,
+            co.ship_time shipTime,
+            co.trade_terms tradeTerms
+        FROM co_contract co , co_contract_product cp WHERE co.id=cp.contract_id AND co.ship_time LIKE #{shipTime}
+    </select>
+
     <select id="selectByExample" parameterType="cn.itcast.domain.cargo.ContractExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -82,20 +98,6 @@
         <if test="orderByClause != null">
             order by ${orderByClause}
         </if>
-    </select>
-    <!--根据船期查询出货表数据-->
-    <select id="findByShipTime" resultType="cn.itcast.vo.ContractProductVo">
-         SELECT
-            co.custom_name customName,
-            co.contract_no contractNo,
-            cp.product_no productNo,
-            cp.cnumber cnumber,
-            cp.factory_name factoryName,
-            co.delivery_period deliveryPeriod,
-            co.ship_time shipTime,
-            co.trade_terms tradeTerms
-            FROM  co_contract co , co_contract_product cp
-             WHERE co.id=cp.contract_id AND co.ship_time LIKE #{shipTime}
     </select>
 
     <!--根据id查询-->
